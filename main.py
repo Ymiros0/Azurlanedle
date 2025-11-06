@@ -46,7 +46,7 @@ with open("true_history.json", encoding="utf-8") as f:
 	true_history = json.load(f)
 
 
-FIELDS_ORDER = ["name", "rarity", "hull", "nation", "class", "VA", "timer", "event"]
+FIELDS_ORDER = ["name", "rarity", "nation", "hull", "class", "timer", "event", "VA"]
 ids = list(data.keys())[:3000]            # original ids (strings like "20204")
 n = len(ids)
 id_to_idx = {id_: i for i, id_ in enumerate(ids)}
@@ -71,6 +71,9 @@ def mask_to_ids(mask):
 def single_index_from_mask(mask):
 	"""Return index of single set bit; undefined if not exactly one bit."""
 	return (mask & -mask).bit_length() - 1
+
+def normalise_compare(compare_dict):
+	return tuple(compare_dict.get(k) for k in FIELDS_ORDER)
 		
 # Top-level bot process function for Windows compatibility
 def bot_process_worker(queue=None):
@@ -81,10 +84,10 @@ def bot_process_worker(queue=None):
 		gdict = SHIPS[gid]
 		for sid in range(n):
 			sdict = SHIPS[sid]
-			fb_dict = compare_ship(sdict, gdict)  # note: solution first, guess second (keeps your existing convention)
+			fb_dict = compare_ship(sdict, gdict)  # note: solution first, guess second
 			if fb_dict == {'name': 'Yes', 'nation': 'Yes', 'rarity': 'Yes', 'hull': 'Yes', 'class': 'Yes', 'VA': 'Yes', 'timer': 'Yes', 'event': 'Yes'}:
 				continue
-			fb = tuple(fb_dict.get(k) for k in FIELDS_ORDER)
+			fb = normalise_compare(fb_dict)
 			mapping.setdefault(fb, 0)
 			mapping[fb] |= (1 << sid)
 		guess_fb_map[gid] = mapping
@@ -103,6 +106,7 @@ def eval_skill_entropy(mask, guess_fb_map):
 	guess_ids = mask_to_ids(FULL_MASK)
 	scores = {}
 	best_score = -1
+	worst_score = 1000 #Technically not future proof, but it'll do for the next quadrillion years with the rate new ships are added
 	for gid in guess_ids:
 		H = 0
 		for fb_mask in guess_fb_map[gid].values():
@@ -117,10 +121,12 @@ def eval_skill_entropy(mask, guess_fb_map):
 			H /= 2
 		if H > best_score:
 			best_score = H
+		if H < worst_score:
+			worst_score = H
 		scores[gid] = H
 	if best_score > 0:
 		for k,v in scores.items():
-			scores[k] = int(100*v/best_score)
+			scores[k] = round(100*(v-worst_score)/(best_score-worst_score))
 	else:
 		for k in scores:
 			scores[k] = 0
@@ -136,6 +142,7 @@ def eval_luck_entropy(mask, guess_fb_map, solution):
 			return {idx: 50}
 	guess_ids = mask_to_ids(FULL_MASK)
 	scores = {}
+	sol_mask = 1 << solution
 	for gid in guess_ids:
 		if gid == solution:
 			scores[gid] = 100
@@ -149,7 +156,7 @@ def eval_luck_entropy(mask, guess_fb_map, solution):
 			s = bit_count(child_mask)
 			if s == 0 and gid != solution:
 				continue
-			if 1 << solution & fb_mask:
+			if sol_mask & fb_mask:
 				x = s
 			if s < l:
 				l = s
@@ -181,7 +188,7 @@ def run_bot_eval(guess_fb_map, solution, guesses):
 	for gid in guesses:
 		# step down to the actual branch
 		next_mask = 0
-		for fb_mask in guess_fb_map[gid].values():
+		for fb_mask in guess_fb_map[gid].values(): #TODO: Just use the actual compare value? You know the solution
 			child_mask = cur_mask & fb_mask
 			if (child_mask >> solution_id) & 1:
 				next_mask = child_mask
@@ -207,8 +214,7 @@ def get_max_skill_guess(mask):
 	#print([(SHIPS[i]["name"], scores[i]) for i in ordered[:10]])
 	return ordered[0]
 
-def sim_play(solution):
-	mask = FULL_MASK
+def sim_play(solution,mask = FULL_MASK):
 	solution_id = name_to_idx[solution]
 	guesses = []
 	while mask:
@@ -216,11 +222,9 @@ def sim_play(solution):
 		if guess == solution_id:
 			guesses.append([SHIPS[guess], {'name': 'Yes', 'nation': 'Yes', 'rarity': 'Yes', 'hull': 'Yes', 'class': 'Yes', 'VA': 'Yes', 'timer': 'Yes', 'event': 'Yes'}])
 			break
-		for response, fb_mask in guess_fb_map[guess].items():
-			child_mask = mask & fb_mask
-			if (child_mask >> solution_id) & 1:
-				mask = child_mask
-				break
+		response = normalise_compare(compare_ship(get_data(solution), SHIPS[guess]))
+		fb_mask = guess_fb_map[guess][response]
+		mask &= fb_mask
 		guesses.append([SHIPS[guess], dict(zip(FIELDS_ORDER, response))])
 	print_guess_table(guesses)
 
@@ -294,7 +298,7 @@ def compare_ship(solution, guess):
 
 def get_data(ship):
 	if isinstance(ship, str):
-		for i in filtered_names:
+		for i in names:
 			if matches(i, ship):
 				return data[names[i]]
 	if isinstance(ship, int):
@@ -455,17 +459,17 @@ if __name__ == "__main__":
 	bot_mode = not args.no_bot
 	no_repeats_bot_only = args.no_repeats_bot_only #TODO: implement this
 
-
-	history_ships = set(hist.values())
-	filtered_names = {name:idx for name, idx in names.items() if name not in history_ships} if no_repeats else names
+	d = 24*3600
+	today = int((time()-7*3600)//d)
+	history_ships = set(v for k,v in hist.items() if k != str(today))
+	filtered_names = {name:idx for name, idx in names.items() if name not in history_ships or not no_repeats}
 	filtered_mask = FULL_MASK
 	if no_repeats:
 		for name in filtered_names:
 			idx = name_to_idx[name]
 			filtered_mask ^= (1 << idx)
 
-	d = 24*3600
-	today = int((time()-7*3600)//d)
+
 	print(f"Booting Azur Lane DLE... {len(filtered_names)} ships available for guessing.")
 
 	# Calculate true_history until today
@@ -561,9 +565,9 @@ if __name__ == "__main__":
 	# Prompt for evaluation
 	eval_choice = bot_mode or input("Would you like to see an evaluation of your guesses? (Y/N): ").strip().lower() in ("y", "yes")
 	if eval_choice:
-		if no_repeats_bot_only:
-			filtered_names = {name:idx for name, idx in names.items() if name not in history_ships and name not in player_guess_names}
-			filtered_mask = FULL_MASK
+		filtered_mask = FULL_MASK
+		if no_repeats or no_repeats_bot_only:
+			filtered_names = {name:idx for name, idx in names.items() if name in history_ships}# and name not in player_guess_names}
 			for name in filtered_names:
 				idx = name_to_idx[name]
 				filtered_mask ^= (1 << idx)
@@ -586,7 +590,7 @@ if __name__ == "__main__":
 		else:
 			print("L + ratio + skill issue + git gud! Try again tomorrow!")
 		print("\nThis is how I would have played by the way:")
-		sim_play(solution)
+		sim_play(solution, filtered_mask)
 	# except Exception as e:
 	# 	print(f"An error occurred: {e}")
 	# 	bot_proc.terminate()

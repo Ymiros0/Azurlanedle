@@ -1174,7 +1174,7 @@
     "rarity": "Super Rare",
     "nation": "The Idolmaster",
     "hull": "CA",
-    "class": "",
+    "class": "No Class",
     "timer": "01:59:50",
     "event": "Azur Anthem",
     "VA": "Chiaki Takahashi"
@@ -8088,5 +8088,55 @@
     "timer": "Cannot be constructed",
     "event": "An Encounter Beneath Clear Skies",
     "VA": "Saori Hayami"
+  },
+  "960012": {
+    "name": "Queen Anne's Revenge",
+    "rarity": "Super Rare",
+    "nation": "Tempesta",
+    "hull": "IXm",
+    "class": "Queen Anne's Revenge",
+    "timer": "04:46:10",
+    "event": "Tempesta and Islas de Libertád",
+    "VA": "Amachi Haru"
+  },
+  "960013": {
+    "name": "Lyme",
+    "rarity": "Super Rare",
+    "nation": "Tempesta",
+    "hull": "IXv",
+    "class": "Lyme",
+    "timer": "00:28:14",
+    "event": "Tempesta and Islas de Libertád",
+    "VA": "Yano Yumika"
+  },
+  "960014": {
+    "name": "Pearl",
+    "rarity": "Super Rare",
+    "nation": "Tempesta",
+    "hull": "IXm",
+    "class": "Pearl",
+    "timer": "04:46:02",
+    "event": "Tempesta and Islas de Libertád",
+    "VA": "Narumi Aisaka"
+  },
+  "960015": {
+    "name": "Royal James",
+    "rarity": "Elite",
+    "nation": "Tempesta",
+    "hull": "IXv",
+    "class": "Royal James",
+    "timer": "00:28:37",
+    "event": "Tempesta and Islas de Libertád",
+    "VA": "Ozawa Rena"
+  },
+  "960016": {
+    "name": "Adventure",
+    "rarity": "Elite",
+    "nation": "Tempesta",
+    "hull": "IXs",
+    "class": "Adventure",
+    "timer": "Cannot be constructed",
+    "event": "Tempesta and Islas de Libertád",
+    "VA": "Yamada Misuzu"
   }
 }
