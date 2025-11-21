@@ -8138,5 +8138,75 @@
     "timer": "Cannot be constructed",
     "event": "Tempesta and Islas de Libertád",
     "VA": "Yamada Misuzu"
+  },
+  "150001": {
+    "name": "Tohka Yatogami",
+    "rarity": "Super Rare",
+    "nation": "Date A Live",
+    "hull": "CA",
+    "class": "No Class",
+    "timer": "01:08:20",
+    "event": "Date A Lane",
+    "VA": "Marina Inoue"
+  },
+  "150002": {
+    "name": "Origami Tobiichi",
+    "rarity": "Super Rare",
+    "nation": "Date A Live",
+    "hull": "CV",
+    "class": "No Class",
+    "timer": "02:13:50",
+    "event": "Date A Lane",
+    "VA": "Misuzu Togashi"
+  },
+  "150003": {
+    "name": "Kotori Itsuka",
+    "rarity": "Super Rare",
+    "nation": "Date A Live",
+    "hull": "BB",
+    "class": "No Class",
+    "timer": "03:05:10",
+    "event": "Date A Lane",
+    "VA": "Ayana Taketatsu"
+  },
+  "150004": {
+    "name": "Yoshino",
+    "rarity": "Super Rare",
+    "nation": "Date A Live",
+    "hull": "CVL",
+    "class": "No Class",
+    "timer": "Cannot be constructed",
+    "event": "Date A Lane",
+    "VA": "Iori Nomizu"
+  },
+  "150005": {
+    "name": "Kurumi Tokisaki",
+    "rarity": "Super Rare",
+    "nation": "Date A Live",
+    "hull": "CL",
+    "class": "No Class",
+    "timer": "Cannot be constructed",
+    "event": "Date A Lane",
+    "VA": "Asami Sanada"
+  },
+  "150006": {
+    "name": "Kaguya Yamai・Yuzuru Yamai",
+    "rarity": "Super Rare",
+    "nation": "Date A Live",
+    "hull": "CL",
+    "class": "No Class",
+    "timer": "02:05:40",
+    "event": "Date A Lane",
+    "VA": "Maaya Uchida & Sarah Emi Bridcutt"
+  },
+  "970208": {
+    "name": "Boise META",
+    "rarity": "Elite",
+    "nation": "META",
+    "hull": "CL",
+    "class": "Framework of Logic",
+    "timer": "Cruise Missions",
+    "event": "Season 26",
+    "VA": "Sasahara Yuu"
   }
 }
