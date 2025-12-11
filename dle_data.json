@@ -7127,7 +7127,7 @@
     "class": "Sendai",
     "timer": "Cannot be constructed",
     "event": "No Event",
-    "VA": "Tomoyo Chuujou"
+    "VA": "Hisako Kanemoto"
   },
   "30214": {
     "name": "Naka",
@@ -8208,5 +8208,15 @@
     "timer": "Cruise Missions",
     "event": "Season 26",
     "VA": "Sasahara Yuu"
+  },
+  "970708": {
+    "name": "Yorktown META",
+    "rarity": "Super Rare",
+    "nation": "META",
+    "hull": "CV",
+    "class": "Framework of Logic",
+    "timer": "META Showdown",
+    "event": "Season 21",
+    "VA": "Yui Ishikawa"
   }
 }

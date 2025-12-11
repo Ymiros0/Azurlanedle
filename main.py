@@ -198,12 +198,15 @@ def run_bot_eval(guess_fb_map, solution, guesses):
 		lck = eval_luck_entropy(cur_mask, guess_fb_map, solution_id).get(gid, 50)
 		bot_guess = sorted(scores, key=scores.get, reverse=True)[0]
 		remain = bit_count(next_mask)
+		remaining = ", ".join(SHIPS[i]["name"] for i in mask_to_ids(next_mask))
+		if strlen(remaining) > 90:
+			remaining = remain
 		out.append({
 			'guess': SHIPS[gid]["name"],
 			'skill': skl,
 			'luck': lck,
 			'botg': SHIPS[bot_guess]["name"],
-			'remaining': ", ".join(SHIPS[i]["name"] for i in mask_to_ids(next_mask)) if remain < 10 else remain
+			'remaining': remaining
 		})
 		cur_mask = next_mask if next_mask else cur_mask
 	return out, cur_mask
@@ -229,7 +232,28 @@ def sim_play(solution,mask = FULL_MASK):
 	print_guess_table(guesses)
 
 
-	
+
+
+def strlen(text):
+    """Calculate string width using unicodedata"""
+    return sum(2 if unicodedata.east_asian_width(char) in 'FW' else 1 for char in text)
+
+def convert_wrappable(text):
+	# Add a single space directly following a fullwidth/wide character
+	return ''.join(char + ' ' if unicodedata.east_asian_width(char) in 'FW' else char for char in text)
+
+def revert_wrappable(text):
+	# Remove a single space directly following a fullwidth/wide character
+	out = []
+	i = 0
+	while i < len(text):
+		c = text[i]
+		out.append(c)
+		if unicodedata.east_asian_width(c) in 'FW' and i + 1 < len(text) and text[i + 1] == ' ':
+			i += 2
+		else:
+			i += 1
+	return ''.join(out)
 
 def normalize_for_compare(s: str) -> str:
 	# Normalize to NFKD (compatibility decomposition)
@@ -266,7 +290,7 @@ def compare_ship(solution, guess):
 	result = {}
 
 	# Simple Yes/No fields
-	simple_fields = ["name", "nation", "rarity", "hull", "class", "VA"]
+	simple_fields = ["name", "nation", "rarity", "hull", "class"]
 	for field in simple_fields:
 		result[field] = "Yes" if solution[field] == guess[field] else "No"
 
@@ -294,6 +318,11 @@ def compare_ship(solution, guess):
 	else:
 		result["event"] = "↓"
 
+	# VA comparison
+	result["VA"] = "No"
+	if guess["VA"] in solution["VA"].split(" & "):
+		result["VA"] = "Yes"
+
 	return result
 
 def get_data(ship):
@@ -320,11 +349,11 @@ def print_guess_eval(results):
 	# Header
 	header = {"guess": "Guess", "skill": "Skill", "luck": "Luck", "botg": "Bot guess", "remaining": "Remaining ships"}
 	fields = ['guess', "skill", "luck", "botg", "remaining"]
-	widths = [max(len(str(r[k])) for r in results) for k in fields]
+	widths = [max(strlen(str(r[k])) for r in results) for k in fields]
 	widths = [max(w, len(h)) for w, h in zip(widths, header.values())]
 
 	def fmt_row(row):
-		return " | ".join(str(val).center(widths[i]) for i, val in enumerate(row))
+		return revert_wrappable(" | ".join(convert_wrappable(str(val)).center(widths[i]) for i, val in enumerate(row)))
 
 	# Print
 	print(fmt_row(header.values()))
@@ -356,8 +385,9 @@ def print_guess_table(guesses):
 
 	def wrap_and_center(text, width):
 		"""Wrap text to a given width and center each line."""
+		text = convert_wrappable(text)
 		wrapped = textwrap.wrap(str(text), width=width) or [""]
-		return [line.center(width) for line in wrapped]
+		return [revert_wrappable(line.center(width)) for line in wrapped]
 
 	def format_row(row_data, result={}):
 		"""Format a row where each cell may have multiple wrapped lines."""
