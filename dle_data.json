@@ -8218,5 +8218,65 @@
     "timer": "META Showdown",
     "event": "Season 21",
     "VA": "Yui Ishikawa"
+  },
+  "10716": {
+    "name": "Lexington II",
+    "rarity": "Ultra Rare",
+    "nation": "Eagle Union",
+    "hull": "CV",
+    "class": "Essex",
+    "timer": "04:25:00",
+    "event": "A Note Through the Firmament",
+    "VA": "Minami Shinoda"
+  },
+  "10725": {
+    "name": "Cowpens",
+    "rarity": "Super Rare",
+    "nation": "Eagle Union",
+    "hull": "CVL",
+    "class": "Independence",
+    "timer": "02:06:40",
+    "event": "A Note Through the Firmament",
+    "VA": "Seria Fukagawa"
+  },
+  "10110": {
+    "name": "William D. Porter",
+    "rarity": "Ultra Rare",
+    "nation": "Eagle Union",
+    "hull": "DD",
+    "class": "Fletcher",
+    "timer": "Cannot be constructed",
+    "event": "A Note Through the Firmament",
+    "VA": "Sumire Morohoshi"
+  },
+  "10155": {
+    "name": "Clarence K. Bronson",
+    "rarity": "Elite",
+    "nation": "Eagle Union",
+    "hull": "DD",
+    "class": "Fletcher",
+    "timer": "Cannot be constructed",
+    "event": "A Note Through the Firmament",
+    "VA": "Hiyori Miyazaki"
+  },
+  "10235": {
+    "name": "Pasadena",
+    "rarity": "Elite",
+    "nation": "Eagle Union",
+    "hull": "CL",
+    "class": "Cleveland",
+    "timer": "01:25:00",
+    "event": "A Note Through the Firmament",
+    "VA": "Nana Hasumi"
+  },
+  "970209": {
+    "name": "Cleveland META",
+    "rarity": "Super Rare",
+    "nation": "META",
+    "hull": "CL",
+    "class": "Ashen Might",
+    "timer": "01:25:00",
+    "event": "A Note Through the Firmament",
+    "VA": "Saya Horigome"
   }
 }
